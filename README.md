@@ -20,6 +20,7 @@ Esta aplicação utiliza a [API](https://brasil.io/api/dataset/cursos-prouni) da
 ./
 ├── index.html
 ├── package-lock.json
+├── package.json
 ├── README.md
 |
 ├── css/                                
