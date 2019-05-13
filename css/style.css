@@ -1,0 +1,26 @@
+/* Estilos Personalizados */
+
+body {
+  background-color: #0000000d;
+}
+.icon-block {
+  padding: 0 15px;
+}
+
+.icon-block .material-icons {
+	font-size: inherit;
+}
+
+#index-banner{
+  background: #26a69a;
+  color: white;
+}
+
+.logo{
+  height: 150px;
+  padding-top: 1em;
+}
+
+#espacamento {
+  margin-top: 20px;
+}

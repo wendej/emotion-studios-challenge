@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0" />
+    <meta name="description" content="Aplicação para consultas relacionadas ao PROUNI 2018">
+    <meta name="keywords" content="Prouni,Faculdade,Universidade,2018,Notas,Enem,Media,Mensalidade">
+    <meta name="author" content="Wenderson E. Junior">
+    <title>eMotion Studios - Cursos e notas de corte do PROUNI 2018</title>
+
+    <!-- Inclusão dos diretórios e CDN's necessários para funcionamento da aplicação -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/nouislider.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="css/materialize.css" type="text/css" rel="stylesheet" media="screen,projection" />
+    <link href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.10.19/css/dataTables.jqueryui.min.css" type="text/css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/responsive/2.2.3/css/responsive.jqueryui.min.css" type="text/css"
+        rel="stylesheet" />
+    <link href="css/style.css" type="text/css" rel="stylesheet" media="screen,projection" />
+</head>
+
+<body>
+    <!-- Cabeçalho -->
+    <div id="index-banner">
+        <div class="container">
+            <div class="row center">
+                <img src="img/logo.png" class="logo">
+                <h5 class="col s12 light"><strong>Cursos e notas de corte do PROUNI 2018</strong></h5>
+            </div>
+            <div class="row center">
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="container" id="espacamento">
+        <div class="col s12">
+            <div class="card-panel white lighten-5 z-depth-2">
+                <div class="section">
+                    <div class="row">
+                        <div class="row center">
+                            <h4 class="col s12">Filtros</h4>
+                        </div>
+                        <form class="col s12" name="relatorio" id="geraRelatorio">
+                            <div class="row">
+                                <div class="input-field col s6 m3">
+                                    <select id="universidade">
+                                        <option value="">Todos</option>
+                                    </select>
+                                    <label for="universidade">Universidade</label>
+                                </div>
+                                <div class="input-field col s6 m3">
+                                    <select id="curso">
+                                        <option value="">Todos</option>
+                                    </select>
+                                    <label for="curso">Curso</label>
+                                </div>
+                                <div class="input-field col s6 m3">
+                                    <select id="grau">
+                                        <option value="">Todos</option>
+                                    </select>
+                                    <label for="grau">Grau</label>
+                                </div>
+                                <div class="input-field col s6 m3">
+                                    <select id="cidade">
+                                        <option value="">Todos</option>
+                                    </select>
+                                    <label for="cidade">Cidade</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col s12">
+                                    <p class="center"><label for="valor-mensalidade">Valor da Mensalidade</label></p>
+                                    <p class="left"><label for="valor-mensalidade">Mínimo</label></p>
+                                    <p class="right"><label for="valor-mensalidade">Máximo</label></p>
+                                    <div id="mensalidade"></div>
+                                </div>
+                            </div>
+                            <div class="row center">
+                                <div class="col s12">
+                                    <p>
+                                        <button class="btn waves-effect waves-light" id="carrega" value="gerarRelatorio"
+                                            type="submit">Gerar
+                                            Relatório
+                                            <i class="material-icons right">send</i>
+                                        </button>
+                                    </p>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="carregando" hidden="hidden" class="center"><img src="img/loading.gif" alt=""></div>
+
+    <!-- Relatório -->
+    <div class="container" hidden="hidden" id="relatorio">
+        <div class="col s12">
+            <div class="card-panel white lighten-5 z-depth-2">
+                <div class="section">
+                    <div class="row">
+                        <div class="row center">
+                            <h4 class="col s12">Relatório</h4>
+                        </div>
+                        <div class="row">
+                            <!-- Dados soliciados -->
+                            <div class="col s12 m6 l6">
+                                <ul class="collection">
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle red">book</i>
+                                        <span class="title"><strong>Quantidade total de cursos</strong> </span>
+                                        <p id="totalCurso"></p>
+                                    </li>
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle blue">account_balance</i>
+                                        <span class="title"><strong>Quantidade total de universidades</strong></span>
+                                        <p id="totalUniversidade"></p>
+                                    </li>
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle green">attach_money</i>
+                                        <span class="title"><strong>Valor Médio da mensalidade</strong></span>
+                                        <p id="mediaMensalidade"></p>
+                                    </li>
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle purple">insert_chart</i>
+                                        <span class="title"><strong>Valor Médio da "Nota Integral
+                                                (Ampla)"</strong></span>
+                                        <p id="mediaNotaIntegralAmpla"></p>
+                                    </li>
+                                    <li class="collection-item avatar">
+                                        <i class="material-icons circle orange">insert_chart</i>
+                                        <span class="title"><strong>Valor Médio da "Nota Integral
+                                                (Cota)"</strong></span>
+                                        <p id="mediaNotaIntegralCota"></p>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Gráfico Pizza -->
+                            <div class="col s12 m6 l6">
+                                <div id="chart"></div>
+                            </div>
+                        </div>
+                        <!-- Tabela -->
+                        <div class="row">
+                            <div class="col s12" id="espaco-tabela">
+                                <table id="tabela" class="display" style="width:100%;">
+                                    <thead>
+                                        <th>UF</th>
+                                        <th>Cidade</th>
+                                        <th>Universidade</th>
+                                        <th>Campus</th>
+                                        <th>Curso</th>
+                                        <th>Grau</th>
+                                        <th>Turno</th>
+                                        <th>Mensalidade</th>
+                                        <th>Bolsas Integrais (Cota)</th>
+                                        <th>Bolsas Integrais (Ampla)</th>
+                                        <th>Bolsas Pariciais (Cota)</th>
+                                        <th>Bolsas Pariciais (Ampla)</th>
+                                        <th>Nota Integral (Cota)</th>
+                                        <th>Nota Integral (Ampla)</th>
+                                        <th>Nota Parcial (Cota)</th>
+                                        <th>Nota Parcial (Ampla)</th>
+                                    </thead>
+                                    <tbody id="corpo-tabela"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inclusão dos diretórios e CDN's necessários para funcionamento da aplicação -->
+    <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/materialize.js"></script>
+    <script src="js/nouislider.js"></script>
+    <script src="node_modules/wnumb-1.1.0/wNumb.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/dataTables.jqueryui.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+    <script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.jqueryui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <script src="js/forms.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/tabela.js"></script>
+    <script src="js/scripts.js"></script>
+</body>
+
+</html>
