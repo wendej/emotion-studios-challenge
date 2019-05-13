@@ -39,6 +39,7 @@ Esta aplicação utiliza a [API](https://brasil.io/api/dataset/cursos-prouni) da
 └── img/                                
     ├── loading.gif
     |── logo.png
+    |── shortcut.png
     |── print1.png
     └── print2.png
 
