@@ -28,3 +28,8 @@ body {
 .espacamento-search {
     margin-right: 11px;
 }
+
+.imagem {
+    width: 300px;
+    height: 180px;
+}
