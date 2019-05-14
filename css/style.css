@@ -11,16 +11,20 @@ body {
 	font-size: inherit;
 }
 
-#index-banner{
+#index-banner {
   background: #26a69a;
   color: white;
 }
 
-.logo{
+.logo {
   height: 150px;
   padding-top: 1em;
 }
 
 #espacamento {
   margin-top: 20px;
+}
+
+.espacamento-search {
+    margin-right: 11px;
 }

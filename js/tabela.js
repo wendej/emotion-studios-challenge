@@ -67,6 +67,7 @@ function configuraTabela(){
         "initComplete": function () {
           $('#carregando').hide();
           $('#relatorio').show();
+          $('#tabela_filter').addClass('espacamento-search');
           //Inicializa o select do datatable com o materialize
           var elems = document.querySelectorAll('select');
           var instances = M.FormSelect.init(elems);   

@@ -52,6 +52,7 @@ $('#geraRelatorio').submit(function (event) {
   //exite o gif enquanto gera o relatório
   $('#carregando').show();
   $('#relatorio').hide();
+  $('#notfound').hide();
 
   //caso já exista uma tabela gerada antes, destrói a tabela antiga para o datatable criar uma nova posteriormente
   if (!$('#corpo-tabela').is(':empty')) {
@@ -92,74 +93,81 @@ $('#geraRelatorio').submit(function (event) {
   }
 
   $.ajax(settings).done(function (response) {
-    var resultado = fazRequisicao(dadosRequisicao, contador);
-    resultadosReq.push(resultado);
 
-    //caso tenha página seguinte, um while será executado percorrendo todas seguintes páginas
-    if (resultado.next != null) {
+    if (response.count != 0) {
+      var resultado = fazRequisicao(dadosRequisicao, contador);
+      resultadosReq.push(resultado);
 
-      contador++;
-      var stop = false;
+      //caso tenha página seguinte, um while será executado percorrendo todas seguintes páginas
+      if (resultado.next != null) {
 
-      while (stop == false) {
+        contador++;
+        var stop = false;
 
-        resultado = fazRequisicao(dadosRequisicao, contador);
-        resultadosReq.push(resultado);
+        while (stop == false) {
 
-        if (resultado.next != null) {
-          contador++;
-        } else {
-          stop = true;
+          resultado = fazRequisicao(dadosRequisicao, contador);
+          resultadosReq.push(resultado);
+
+          if (resultado.next != null) {
+            contador++;
+          } else {
+            stop = true;
+          }
         }
       }
-    }
 
-    //percorre todos os resultados obtidos no while
-    for (let i = 0; i < resultadosReq.length; i++) {
-      $.each(resultadosReq[i].results, function (index, value) {
+      //percorre todos os resultados obtidos no while
+      for (let i = 0; i < resultadosReq.length; i++) {
+        $.each(resultadosReq[i].results, function (index, value) {
 
-        //caso o valor da mensalidade do curso esteja dentro os valores pré-estabelecidos no slider, executa o bloco abaixo
-        if (value.mensalidade >= valorMin && value.mensalidade <= valorMax) {
+          //caso o valor da mensalidade do curso esteja dentro os valores pré-estabelecidos no slider, executa o bloco abaixo
+          if (value.mensalidade >= valorMin && value.mensalidade <= valorMax) {
 
-          //cria uma nova <tr>
-          criaLinhaTabela(aux, value);
+            //cria uma nova <tr>
+            criaLinhaTabela(aux, value);
 
-          //valida se existe valor na posição antes de somar, caso tenha, realiza soma
-          if (value.nota_integral_ampla != null) {
-            totalNotaIntegralAmpla = parseFloat(totalNotaIntegralAmpla) + parseFloat(value.nota_integral_ampla);
+            //valida se existe valor na posição antes de somar, caso tenha, realiza soma
+            if (value.nota_integral_ampla != null) {
+              totalNotaIntegralAmpla = parseFloat(totalNotaIntegralAmpla) + parseFloat(value.nota_integral_ampla);
+            }
+            if (value.nota_integral_cotas != null) {
+              totalNotaIntegralCota = parseFloat(totalNotaIntegralCota) + parseFloat(value.nota_integral_cotas);
+            }
+            //acumula o valor da mensalidade
+            totalMensalidade = parseFloat(totalMensalidade) + parseFloat(value.mensalidade);
+            //acumula todas universidades em um array
+            universidade.push(value.universidade_nome);
+            //acumula todas universidades em um array
+            uf.push(value.uf_busca);
+            aux++;
           }
-          if (value.nota_integral_cotas != null) {
-            totalNotaIntegralCota = parseFloat(totalNotaIntegralCota) + parseFloat(value.nota_integral_cotas);
-          }
-          //acumula o valor da mensalidade
-          totalMensalidade = parseFloat(totalMensalidade) + parseFloat(value.mensalidade);
-          //acumula todas universidades em um array
-          universidade.push(value.universidade_nome);
-          //acumula todas universidades em um array
-          uf.push(value.uf_busca);
-          aux++;
-        }
-      });
+        });
+      }
+
+      //remove valores duplicados do array
+      var universidades = [...new Set(universidade)];
+
+      //a variável quantidade é utilizada tanto para calcular as médias quanto o total de cursos
+      var quantidade = resultadosReq[0].count;
+
+      //atribui os resultados aos seus respectivos elementos
+      $('#mediaMensalidade').html('R$' + (calculaMedia(totalMensalidade.toFixed(2), quantidade)));
+      $('#mediaNotaIntegralAmpla').html(calculaMedia(totalNotaIntegralAmpla.toFixed(2), quantidade));
+      $('#mediaNotaIntegralCota').html(calculaMedia(totalNotaIntegralCota.toFixed(2), quantidade));
+      $('#totalUniversidade').html(universidades.length);
+      $('#totalCurso').html(quantidade);
+
+      //Separa os Estados nas suas devidas Regiões
+      var dadosRegioes = separaRegioesPorUf(uf);
+      geraGrafico(dadosRegioes);
+
+      //faz a chamada do método responsável por gerar o datatable
+      configuraTabela();
+    } else {
+      //Exibe a div de notfound e esconde o gif
+      $('#carregando').hide();
+      $('#notfound').show();
     }
-
-    //remove valores duplicados do array
-    var universidades = [...new Set(universidade)];
-
-    //a variável quantidade é utilizada tanto para calcular as médias quanto o total de cursos
-    var quantidade = resultadosReq[0].count;
-
-    //atribui os resultados aos seus respectivos elementos
-    $('#mediaMensalidade').html('R$' + (calculaMedia(totalMensalidade.toFixed(2), quantidade)));
-    $('#mediaNotaIntegralAmpla').html(calculaMedia(totalNotaIntegralAmpla.toFixed(2), quantidade));
-    $('#mediaNotaIntegralCota').html(calculaMedia(totalNotaIntegralCota.toFixed(2), quantidade));
-    $('#totalUniversidade').html(universidades.length);
-    $('#totalCurso').html(quantidade);
-
-    //Separa os Estados nas suas devidas Regiões
-    var dadosRegioes = separaRegioesPorUf(uf);
-    geraGrafico(dadosRegioes);
-
-    //faz a chamada do método responsável por gerar o datatable
-    configuraTabela();
   });
 });
