@@ -67,6 +67,7 @@ $('#geraRelatorio').submit(function (event) {
   var totalNotaIntegralCota = 0;
   var uf = [];
   var resultadosReq = [];
+  var curso = [];
   var contador = 1;
   var aux = 0;
 
@@ -138,12 +139,17 @@ $('#geraRelatorio').submit(function (event) {
             totalMensalidade = parseFloat(totalMensalidade) + parseFloat(value.mensalidade);
             //acumula todas universidades em um array
             universidade.push(value.universidade_nome);
-            //acumula todas universidades em um array
+            //acumula todos cursos em um array
+            curso.push(value.nome);
+            //acumula todos uf em um array
             uf.push(value.uf_busca);
             aux++;
           }
         });
       }
+
+      //remove valores duplicados do array
+      var cursos = [...new Set(curso)];
 
       //remove valores duplicados do array
       var universidades = [...new Set(universidade)];
@@ -156,7 +162,7 @@ $('#geraRelatorio').submit(function (event) {
       $('#mediaNotaIntegralAmpla').html(calculaMedia(totalNotaIntegralAmpla.toFixed(2), quantidade));
       $('#mediaNotaIntegralCota').html(calculaMedia(totalNotaIntegralCota.toFixed(2), quantidade));
       $('#totalUniversidade').html(universidades.length);
-      $('#totalCurso').html(quantidade);
+      $('#totalCurso').html(cursos.length);
 
       //Separa os Estados nas suas devidas Regiões
       var dadosRegioes = separaRegioesPorUf(uf);
